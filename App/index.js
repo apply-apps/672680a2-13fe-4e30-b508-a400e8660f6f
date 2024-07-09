@@ -3,97 +3,10 @@
 
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, Button, View, TextInput } from 'react-native';
-
-// RecipientScreen component
-const preDefinedRecipients = ['Father', 'Mother', 'Boss', 'Brother', 'Sister'];
-const RecipientScreen = ({ setScreen, setRecipient }) => {
-    const [customRecipient, setCustomRecipient] = useState('');
-
-    const handleNext = (recipient) => {
-        setRecipient(recipient);
-        setScreen('Occasion');
-    };
-
-    return (
-        <View style={styles.container}>
-            <Text style={styles.label}>Who is it for?</Text>
-            {preDefinedRecipients.map((recipient) => (
-                <Button key={recipient} title={recipient} onPress={() => handleNext(recipient)} />
-            ))}
-            <TextInput
-                style={styles.input}
-                placeholder="Custom Recipient"
-                value={customRecipient}
-                onChangeText={setCustomRecipient}
-            />
-            <Button title="Next" onPress={() => handleNext(customRecipient)} />
-        </View>
-    );
-};
-
-// OccasionScreen component
-const preDefinedOccasions = ['Birthday', 'New Year', 'Christmas', 'Anniversary', 'Graduation'];
-const OccasionScreen = ({ setScreen, setOccasion }) => {
-    const [customOccasion, setCustomOccasion] = useState('');
-
-    const handleNext = (occasion) => {
-        setOccasion(occasion);
-        setScreen('Style');
-    };
-
-    return (
-        <View style={styles.container}>
-            <Text style={styles.label}>What's the occasion?</Text>
-            {preDefinedOccasions.map((occasion) => (
-                <Button key={occasion} title={occasion} onPress={() => handleNext(occasion)} />
-            ))}
-            <TextInput
-                style={styles.input}
-                placeholder="Custom Occasion"
-                value={customOccasion}
-                onChangeText={setCustomOccasion}
-            />
-            <Button title="Next" onPress={() => handleNext(customOccasion)} />
-        </View>
-    );
-};
-
-// StyleScreen component
-const preDefinedStyles = ['Formal', 'Casual', 'Humorous', 'Emotional', 'Inspirational'];
-const StyleScreen = ({ setScreen, setStyle }) => {
-    const [customStyle, setCustomStyle] = useState('');
-
-    const handleNext = (style) => {
-        setStyle(style);
-        setScreen('Result');
-    };
-
-    return (
-        <View style={styles.container}>
-            <Text style={styles.label}>Choose a style</Text>
-            {preDefinedStyles.map((style) => (
-                <Button key={style} title={style} onPress={() => handleNext(style)} />
-            ))}
-            <TextInput
-                style={styles.input}
-                placeholder="Custom Style"
-                value={customStyle}
-                onChangeText={setCustomStyle}
-            />
-            <Button title="Next" onPress={() => handleNext(customStyle)} />
-        </View>
-    );
-};
-
-// ResultScreen component
-const ResultScreen = ({ greeting }) => {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.label}>Generated Greeting:</Text>
-            <Text style={styles.greeting}>{greeting}</Text>
-        </View>
-    );
-};
+import RecipientScreen from './RecipientScreen';
+import OccasionScreen from './OccasionScreen';
+import StyleScreen from './StyleScreen';
+import ResultScreen from './ResultScreen';
 
 const App = () => {
     const [screen, setScreen] = useState('Recipient');
@@ -134,7 +47,7 @@ const App = () => {
             case 'Occasion':
                 return <OccasionScreen setScreen={setScreen} setOccasion={setOccasion} />;
             case 'Style':
-                return <StyleScreen setScreen={setScreen} setStyle={setStyle} />;
+                return <StyleScreen setScreen={setScreen} setStyle={setStyle} handleGreetingRequest={handleGreetingRequest} />;
             case 'Result':
                 return <ResultScreen greeting={greeting} />;
             default:
@@ -146,9 +59,6 @@ const App = () => {
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Greeting Generator</Text>
             {renderScreen()}
-            {screen === 'Style' && (
-                <Button title="Generate Greeting" onPress={handleGreetingRequest} />
-            )}
         </SafeAreaView>
     );
 };
@@ -165,6 +75,40 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
     },
+});
+
+const preDefinedRecipients = ['Father', 'Mother', 'Boss', 'Brother', 'Sister'];
+
+const RecipientScreen = ({ setScreen, setRecipient }) => {
+    const [customRecipient, setCustomRecipient] = useState('');
+
+    const handleNext = (recipient) => {
+        setRecipient(recipient);
+        setScreen('Occasion');
+    };
+
+    return (
+        <View style={stylesRecipient.container}>
+            <Text style={stylesRecipient.label}>Who is it for?</Text>
+            {preDefinedRecipients.map((recipient) => (
+                <Button key={recipient} title={recipient} onPress={() => handleNext(recipient)} />
+            ))}
+            <TextInput
+                style={stylesRecipient.input}
+                placeholder="Custom Recipient"
+                value={customRecipient}
+                onChangeText={setCustomRecipient}
+            />
+            <Button title="Next" onPress={() => handleNext(customRecipient)} />
+        </View>
+    );
+};
+
+const stylesRecipient = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+    },
     label: {
         fontSize: 18,
         marginBottom: 10,
@@ -176,11 +120,123 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 5,
     },
-    greeting: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        textAlign: 'center',
+});
+
+const preDefinedOccasions = ['Birthday', 'New Year', 'Christmas', 'Anniversary', 'Graduation'];
+
+const OccasionScreen = ({ setScreen, setOccasion }) => {
+    const [customOccasion, setCustomOccasion] = useState('');
+
+    const handleNext = (occasion) => {
+        setOccasion(occasion);
+        setScreen('Style');
+    };
+
+    return (
+        <View style={stylesOccasion.container}>
+            <Text style={stylesOccasion.label}>What's the occasion?</Text>
+            {preDefinedOccasions.map((occasion) => (
+                <Button key={occasion} title={occasion} onPress={() => handleNext(occasion)} />
+            ))}
+            <TextInput
+                style={stylesOccasion.input}
+                placeholder="Custom Occasion"
+                value={customOccasion}
+                onChangeText={setCustomOccasion}
+            />
+            <Button title="Next" onPress={() => handleNext(customOccasion)} />
+        </View>
+    );
+};
+
+const stylesOccasion = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
     },
+    label: {
+        fontSize: 18,
+        marginBottom: 10,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#cccccc',
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 5,
+    },
+});
+
+const preDefinedStyles = ['Formal', 'Casual', 'Humorous', 'Emotional', 'Inspirational'];
+
+const StyleScreen = ({ setScreen, setStyle, handleGreetingRequest }) => {
+    const [customStyle, setCustomStyle] = useState('');
+
+    const handleNext = (style) => {
+        setStyle(style);
+        handleGreetingRequest();
+    };
+
+    return (
+        <View style={stylesStyle.container}>
+            <Text style={stylesStyle.label}>Choose a style</Text>
+            {preDefinedStyles.map((style) => (
+                <Button key={style} title={style} onPress={() => handleNext(style)} />
+            ))}
+            <TextInput
+                style={stylesStyle.input}
+                placeholder="Custom Style"
+                value={customStyle}
+                onChangeText={setCustomStyle}
+            />
+            <Button title="Next" onPress={() => handleNext(customStyle)} />
+        </View>
+    );
+};
+
+const stylesStyle = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    label: {
+        fontSize: 18,
+        marginBottom: 10,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#cccccc',
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 5,
+    },
+});
+
+const ResultScreen = ({ greeting }) => {
+  return (
+    <View style={stylesResult.container}>
+      <Text style={stylesResult.label}>Generated Greeting:</Text>
+      <Text style={stylesResult.greeting}>{greeting}</Text>
+    </View>
+  );
+};
+
+const stylesResult = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  greeting: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    textAlign: 'center',
+  },
 });
 
 export default App;
