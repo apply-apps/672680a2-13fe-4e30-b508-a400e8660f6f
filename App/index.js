@@ -4,20 +4,15 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, Button, TextInput } from 'react-native';
 
-const preDefinedRecipients = ['Father', 'Mother', 'Boss', 'Brother', 'Sister'];
-const preDefinedOccasions = ['Birthday', 'New Year', 'Christmas', 'Anniversary', 'Graduation'];
-const preDefinedStyles = ['Formal', 'Casual', 'Humorous', 'Emotional', 'Inspirational'];
-
 const RecipientScreen = ({ setScreen, setRecipient }) => {
     const [customRecipient, setCustomRecipient] = useState('');
-
+    const preDefinedRecipients = ['Father', 'Mother', 'Boss', 'Brother', 'Sister'];
     const handleNext = (recipient) => {
         setRecipient(recipient);
         setScreen('Occasion');
     };
-
     return (
-        <View style={styles.recipientContainer}>
+        <View style={styles.container}>
             <Text style={styles.label}>Who is it for?</Text>
             {preDefinedRecipients.map((recipient) => (
                 <Button key={recipient} title={recipient} onPress={() => handleNext(recipient)} />
@@ -35,14 +30,13 @@ const RecipientScreen = ({ setScreen, setRecipient }) => {
 
 const OccasionScreen = ({ setScreen, setOccasion }) => {
     const [customOccasion, setCustomOccasion] = useState('');
-
+    const preDefinedOccasions = ['Birthday', 'New Year', 'Christmas', 'Anniversary', 'Graduation'];
     const handleNext = (occasion) => {
         setOccasion(occasion);
         setScreen('Style');
     };
-
     return (
-        <View style={styles.occasionContainer}>
+        <View style={styles.container}>
             <Text style={styles.label}>What's the occasion?</Text>
             {preDefinedOccasions.map((occasion) => (
                 <Button key={occasion} title={occasion} onPress={() => handleNext(occasion)} />
@@ -60,14 +54,13 @@ const OccasionScreen = ({ setScreen, setOccasion }) => {
 
 const StyleScreen = ({ setScreen, setStyle, handleGreetingRequest }) => {
     const [customStyle, setCustomStyle] = useState('');
-
+    const preDefinedStyles = ['Formal', 'Casual', 'Humorous', 'Emotional', 'Inspirational'];
     const handleNext = (style) => {
         setStyle(style);
         handleGreetingRequest();
     };
-
     return (
-        <View style={styles.styleContainer}>
+        <View style={styles.container}>
             <Text style={styles.label}>Choose a style</Text>
             {preDefinedStyles.map((style) => (
                 <Button key={style} title={style} onPress={() => handleNext(style)} />
@@ -83,11 +76,12 @@ const StyleScreen = ({ setScreen, setStyle, handleGreetingRequest }) => {
     );
 };
 
-const ResultScreen = ({ greeting }) => {
+const ResultScreen = ({ greeting, handleStartOver }) => {
     return (
-        <View style={styles.resultContainer}>
+        <View style={styles.container}>
             <Text style={styles.label}>Generated Greeting:</Text>
             <Text style={styles.greeting}>{greeting}</Text>
+            <Button title="Start Over" onPress={handleStartOver} />
         </View>
     );
 };
@@ -109,19 +103,27 @@ export default function App() {
                 messages: [
                     {
                         role: 'system',
-                        content: 'You are a helpful assistant. Please provide answers for given requests.',
+                        content: 'You are a helpful assistant. Please provide answers for given requests.'
                     },
                     {
                         role: 'user',
-                        content: `Write a ${style} greeting for ${recipient} on the occasion of ${occasion}.`,
-                    },
+                        content: `Write a ${style} greeting for ${recipient} on the occasion of ${occasion}.`
+                    }
                 ],
-                model: 'gpt-4o',
-            }),
+                model: 'gpt-4o'
+            })
         });
         const data = await response.json();
         setGreeting(data.response);
         setScreen('Result');
+    };
+
+    const handleStartOver = () => {
+        setRecipient('');
+        setOccasion('');
+        setStyle('');
+        setGreeting('');
+        setScreen('Recipient');
     };
 
     const renderScreen = () => {
@@ -133,7 +135,7 @@ export default function App() {
             case 'Style':
                 return <StyleScreen setScreen={setScreen} setStyle={setStyle} handleGreetingRequest={handleGreetingRequest} />;
             case 'Result':
-                return <ResultScreen greeting={greeting} />;
+                return <ResultScreen greeting={greeting} handleStartOver={handleStartOver} />;
             default:
                 return null;
         }
@@ -150,31 +152,9 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 20,
-        paddingHorizontal: 16,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    recipientContainer: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    occasionContainer: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    styleContainer: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    resultContainer: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 16,
     },
     label: {
         fontSize: 18,
@@ -187,9 +167,16 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 5,
     },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
     greeting: {
         fontSize: 16,
         paddingHorizontal: 10,
         textAlign: 'center',
+        marginBottom: 20,
     },
 });
